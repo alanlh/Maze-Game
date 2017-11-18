@@ -52,10 +52,6 @@ public class MazeGame extends JPanel {
 	JButton firstAidButton = new JButton ("No First Aid!"); // Used to heal self.
 	JButton foodButton = new JButton("No food!"); // Used to lessen hunger.
 	JButton stickButton = new JButton("No sticks!"); // Sticks are placed vertically away from the player. Can be used for pointing.
-	int numberCandle;
-	int numberFirstAid;
-	int numberFood;
-	int numberStick;
 	
 	// -- Where map and info are displayed -- //
 	
@@ -69,6 +65,11 @@ public class MazeGame extends JPanel {
 	
 	public boolean running;
 		
+	/**
+	 * Constructor
+	 * Sets up the JPanel where the game itself is located. Starts entry dialogue.
+	 * When finished, starts the game itself. 
+	 */
 	public MazeGame() {		
 		// Initialize variables, but do not perform any actions.
 					
@@ -117,12 +118,14 @@ public class MazeGame extends JPanel {
 				
 		// --- Items --- //
 		
-		numberCandle = 0;
-		numberFirstAid = 0;
-		numberFood = 0;
-		numberStick = 0;
+		introTextDump();
 	}
 	
+	/**
+	 * Creates entry dialogue, displayed every certain amount of seconds. 
+	 * Uses Timer to achieve goal
+	 * TODO: Investigate whether or not the counter variable can be stored in the Timer class, rather than MazeGame class.
+	 */
 	public void introTextDump()
 	{
 		delay = new Timer(delayTimesMilliSec[textDumpIndex], new ActionListener() {
@@ -137,6 +140,10 @@ public class MazeGame extends JPanel {
 		delay.start();
 	}
 	
+	/**
+	 * Called whenever the timer fires. Adds text to screen and changes timer value. 
+	 * After all messages are displayed, the next Timer fire will remove everything from screen and start the game loop. 
+	 */
 	private void executeTextDump() {				
 		this.textDumpIndex ++;
 		
@@ -162,6 +169,9 @@ public class MazeGame extends JPanel {
 				
 	}
 	
+	/**
+	 * Starts the game. 
+	 */
 	public void prepareMap()
 	{		
 		organizePanel();
@@ -174,7 +184,10 @@ public class MazeGame extends JPanel {
 		
 		runGameLoop();
 	}
-	
+
+	/**
+	 * Organizes the game panel. Adds all the buttons, and subpanels.
+	 */
 	private void organizePanel() {
 		this.setLayout(new GridBagLayout());
 		
@@ -229,9 +242,11 @@ public class MazeGame extends JPanel {
 		
 		this.revalidate();
 		this.repaint();
-
 	}
-		
+
+	/**
+	 * Adds action listeners to each of the 4 buttons
+	 */
 	private void addButtonActionListeners() {
 		candleButton.addActionListener(new ActionListener() {
 			PlayerAction action = new PlayerAction(AvailableActions.LIGHT_CANDLE, MazeGame.this);
@@ -271,6 +286,9 @@ public class MazeGame extends JPanel {
 		});
 	}
 	
+	/**
+	 * Adds key bindings to used keys (WASD)
+	 */
 	private void addKeyBindings() {
 		InputMap inputMap = this.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 		ActionMap actionMap = this.getActionMap();
@@ -300,6 +318,9 @@ public class MazeGame extends JPanel {
 		actionMap.put(AvailableActions.RIGHT_STOP, new PlayerAction(AvailableActions.RIGHT_STOP, this));	
 	}
 
+	/**
+	 * Adds a mouse listener for clicking. 
+	 */
 	private void addMouseListener() {
 		mainMap.addMouseListener(new MouseAdapter() {
 			PlayerAction leftClick = new PlayerAction(AvailableActions.PICK_ITEM, MazeGame.this);
@@ -316,6 +337,9 @@ public class MazeGame extends JPanel {
 		});
 	}
 	
+	/**
+	 * Starts a new game loop
+	 */
 	public void runGameLoop() {
 		Thread loop = new Thread() {
 			@Override
@@ -325,7 +349,11 @@ public class MazeGame extends JPanel {
 		};
 		loop.start();
 	}
-		
+	
+	/**
+	 * Bulk of game loop in a new thread
+	 * Updates game per constant time, and renders as often as possible up to a max FPS
+	 */
 	private void gameLoop() {
 		map = new Maze();
 		player = new Character(map.getStartingRoom(), this);
@@ -348,6 +376,9 @@ public class MazeGame extends JPanel {
 			
 			long currentTime = System.nanoTime();
 			
+			// Makes sure that it doesn't render too often, or too little
+			// Second line allows frame rate to drop if rendering takes too much time
+			// If updating takes too long, same as if rendering is too slow(?)
 			while (currentTime > nextUpdateTime
 					&& loopsSinceRender < MAX_UPDATES_PER_RENDER) {
 				PlayerAction.executeList();

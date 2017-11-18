@@ -30,7 +30,6 @@ public class PlayerAction extends AbstractAction {
 		actionHandleQueue.add(action);
 	}
 
-	
 	/**
 	 * There just has to be a cleaner structure for doing this.
 	 */
@@ -64,8 +63,10 @@ public class PlayerAction extends AbstractAction {
 				game.getCharacter().setMovement(AvailableActions.LEFT, false);
 				break;
 			case CONSUME_FOOD:
+				game.getCharacter().setHealth(AvailableActions.CONSUME_FOOD);
 				break;
 			case APPLY_FIRST_AID:
+				game.getCharacter().setHealth(AvailableActions.APPLY_FIRST_AID);
 				break;
 			case HOLD_STICK:
 				break;

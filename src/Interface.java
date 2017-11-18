@@ -5,7 +5,11 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
 // This is the code for the interface of the game, does not include the game itself.
-
+/**
+ * Creates a new window. 
+ * @author Alan Hu
+ *
+ */
 public class Interface extends JFrame {
 	// Creates the window
 	JFrame window = new JFrame ("The Maze Game");
@@ -31,7 +35,9 @@ public class Interface extends JFrame {
 	// Buttons in in-game menu
 	JButton goToMenu = new JButton("Back to Menu");
 	
-	// Constructor method
+	/**
+	 * Creates the window, sets basic layout for everything.
+	 */
 	public Interface() {
 		// Window Properties
 		window.setSize(windowWidth, windowHeight);
@@ -122,6 +128,10 @@ public class Interface extends JFrame {
 		window.setVisible(true);
 	}
 	
+	/**
+	 * Helper method. Used when player presses "Start Game" Button. 
+	 * Changes the panel to the game panel.
+	 */
 	private void startNewGame() {
 		gameField = new MazeGame();
 		
@@ -133,14 +143,23 @@ public class Interface extends JFrame {
 		gameField.setVisible(true);
 		gameMenu.setVisible(true);
 		
-		gameField.introTextDump();
 		// gameField.prepareMap();
 	}
 	
+	/**
+	 * Called when user presses the "Exit Game" Button
+	 * TODO: Investigate if there's a cleaner way of doing this. 
+	 */
 	private void exitGame() {
 		System.exit(0);
 	}
 	
+	/**
+	 * After uses presses start game, the screen is divided into 2 components: A toolbar at the top, and the game panel at the bottom.
+	 * Called when user presses the BackToMenu button in the toolbar. Stops the game. Ideally, should save everything. 
+	 * 
+	 * TODO: Instead of simply calling gameField.running = false, create a method that cleanly finishes all processes. 
+	 */
 	private void backToMenu() {
 		gameField.setVisible(false);
 		gameMenu.setVisible(false);

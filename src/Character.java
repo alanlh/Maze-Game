@@ -29,9 +29,18 @@ public class Character {
 	private double health = 1;
 	private double warmth = 1;
 	
-	private Items inHand;
+	private double currentEating = 0;
+	private double currentFirstAid = 0;
+	private final double FOOD_VALUE = 1;
 	
-	private Color characterColor = Color.orange;	
+	private Items inHand;
+	int candleCount;
+	int aidCount;
+	int foodCount;
+	int stickCount;
+
+	
+	private final Color characterColor = Color.orange;
 	
 	public Character(Room startRoom, MazeGame game) {
 		currentRoom = startRoom;
@@ -100,9 +109,50 @@ public class Character {
 	}
 	
 	public void setHealth(AvailableActions aidType) {
-		switch (aidType) {
-		case CONSUME_FOOD:
-			
+		/**
+		 * This should eventually be replaced with creating a bar with an icon of each type of food,
+		 * So that the player can select the specific type.
+		 * This means that each food type should have different properties.
+		 * However, this implementation should assume that food types are different. 
+		 */
+		if (aidType == AvailableActions.CONSUME_FOOD) {
+			if (foodCount > 0) {
+				currentEating += FOOD_VALUE;
+			} else {
+				// TODO: Display message to player
+			}
+		} else if (aidType == AvailableActions.APPLY_FIRST_AID) {
+			if (inventoryContains(Items.ItemTypes.AID)) {
+				
+			} else {
+				
+			}
 		}
+		
+	}
+	
+	private boolean inventoryContains(Items.ItemTypes itemType) {
+		for(Items item : itemInventory) {
+			if (item.getType() == itemType) {
+				
+			}
+		}
+		return false;
+	}
+	
+	private int getFoodCount() {
+		return foodCount;
+	}
+	
+	private int getAidCount() {
+		return aidCount;
+	}
+	
+	private int getStickCount() {
+		return stickCount;
+	}
+	
+	private int getCandleCount() {
+		return candleCount;
 	}
 }
