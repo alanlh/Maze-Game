@@ -11,6 +11,9 @@ public class Character {
 	private double moveSpeed = 0;
 	private double turnRate = 0; // CCW is positive
 	
+	final int CHARACTER_DRAW_RADIUS = 25;
+	final Color CHARACTER_COLOR = Color.ORANGE;
+	
 	private final double MAX_MOVE_SPEED;
 	private final double MAX_TURN_SPEED;
 	
@@ -39,7 +42,6 @@ public class Character {
 	int foodCount;
 	int stickCount;
 
-	
 	private final Color characterColor = Color.orange;
 	
 	public Character(Room startRoom, MazeGame game) {
@@ -73,16 +75,16 @@ public class Character {
 		
 		if (turningLeft == turningRight) {			
 			turnRate = (turnRate > 0) ? Math.max(turnRate - TURN_ACCELERATION, 0) : Math.min(turnRate + TURN_ACCELERATION, 0);
-		} else if (turningLeft) {
-			turnRate = Math.min(turnRate + TURN_ACCELERATION, MAX_TURN_SPEED);
 		} else if (turningRight) {
+			turnRate = Math.min(turnRate + TURN_ACCELERATION, MAX_TURN_SPEED);
+		} else if (turningLeft) {
 			turnRate = Math.max(turnRate - TURN_ACCELERATION, -1 * MAX_TURN_SPEED);
 		}
 		
 		faceAngleDeg = (faceAngleDeg + turnRate) % 360;
 		
-		x += moveSpeed * Math.cos(faceAngleDeg*Math.PI/180);
-		y += moveSpeed * Math.sin(faceAngleDeg*Math.PI/180);
+		x -= moveSpeed * Math.cos(faceAngleDeg * Math.PI / 180);
+		y -= moveSpeed * Math.sin(faceAngleDeg * Math.PI / 180);
 	}
 	
 	public void setMovement(AvailableActions direction, boolean isMoving) {
@@ -154,5 +156,13 @@ public class Character {
 	
 	private int getCandleCount() {
 		return candleCount;
+	}
+	
+	double getX() {
+		return x;
+	}
+	
+	double getY() {
+		return y;
 	}
 }

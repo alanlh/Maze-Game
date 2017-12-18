@@ -5,6 +5,7 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -55,7 +56,7 @@ public class MazeGame extends JPanel {
 	
 	// -- Where map and info are displayed -- //
 	
-	JPanel mainMap;
+	MainMap mainMap;
 	JPanel characterInfoPanel;
 	
 	final double UPDATE_RATE = 1.0/25.0;
@@ -64,7 +65,7 @@ public class MazeGame extends JPanel {
 	final double MAX_FPS = 1.0/120.0;
 	
 	public boolean running;
-		
+			
 	/**
 	 * Constructor
 	 * Sets up the JPanel where the game itself is located. Starts entry dialogue.
@@ -112,11 +113,14 @@ public class MazeGame extends JPanel {
 		// -- sets layout of panel -- //
 		
 		// Creates character, maze
-		mainMap = new JPanel();
+		mainMap = new MainMap();
 		characterInfoPanel = new JPanel();
 		map = new Maze();
 				
 		// --- Items --- //
+				
+		player = new Character(map.getStartingRoom(), this);
+		mainMap.setCharacter(player);
 		
 		introTextDump();
 	}
@@ -242,6 +246,7 @@ public class MazeGame extends JPanel {
 		
 		this.revalidate();
 		this.repaint();
+		mainMap.setVisible(true);
 	}
 
 	/**
@@ -355,9 +360,7 @@ public class MazeGame extends JPanel {
 	 * Updates game per constant time, and renders as often as possible up to a max FPS
 	 */
 	private void gameLoop() {
-		map = new Maze();
-		player = new Character(map.getStartingRoom(), this);
-		
+	
 		final double UPDATE_RATE = 1.0/25.0;
 		final int MAX_UPDATES_PER_RENDER = 5;
 		
@@ -393,17 +396,15 @@ public class MazeGame extends JPanel {
 			currentTime = System.nanoTime();
 			
 			if (currentTime > nextRenderTime) {
-				displayGame(interpolation);
+				mainMap.setInterpolation(interpolation);
+				mainMap.repaint();
 				nextRenderTime = currentTime + (long)(MAX_FPS * SEC_TO_NANOSEC);
 			}
 
 			loopsSinceRender = 0;
 		}
 	}
-		
-	private void displayGame(double interpolation) {
-	}
-	
+			
 	private void checkUserInputs() {
 		
 	}

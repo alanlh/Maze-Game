@@ -124,7 +124,7 @@ public class Interface extends JFrame {
 		// window.add(mainMenu, BorderLayout.CENTER);
 		window.add(mainMenu);
 		// Add this statement to end to make everything show up? 
-		// window.pack();
+//		window.pack();
 		window.setVisible(true);
 	}
 	
