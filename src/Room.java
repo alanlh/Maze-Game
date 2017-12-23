@@ -5,8 +5,11 @@ public class Room {
 	
 	Random random = new Random();
 	
-	private int x;
-	private int y;
+	private final int roomColumn;
+	private final int roomRow;
+	
+	static final double ROOM_WIDTH = 100;
+	static final double ROOM_HEIGHT = 100;
 	
 	private Maze mapContainer;
 	private boolean northWall, eastWall, southWall, westWall;
@@ -24,8 +27,8 @@ public class Room {
 		
 	// constructor method; if blocked, does not do anything
 	public Room(int xCoordinate, int yCoordinate, Maze mapContainer) {
-		this.x = xCoordinate;
-		this.y = yCoordinate;
+		this.roomColumn = xCoordinate;
+		this.roomRow = yCoordinate;
 		this.mapContainer = mapContainer;
 		
 		northWall = true; 
@@ -37,18 +40,18 @@ public class Room {
 	}
 	
 	public void initialize() {
-		northRoom = mapContainer.getRoom(x,  y + 1);
-		eastRoom = mapContainer.getRoom(x + 1,  y);
-		southRoom = mapContainer.getRoom(x,  y - 1);
-		westRoom = mapContainer.getRoom(x - 1,  y);
+		northRoom = mapContainer.getRoom(roomColumn,  roomRow + 1);
+		eastRoom = mapContainer.getRoom(roomColumn + 1,  roomRow);
+		southRoom = mapContainer.getRoom(roomColumn,  roomRow - 1);
+		westRoom = mapContainer.getRoom(roomColumn - 1,  roomRow);
 	}
 	
 	public int getX() {
-		return x;
+		return roomColumn;
 	}
 	
 	public int getY() {
-		return y;
+		return roomRow;
 	}
 	
 	public void generateMaze(int mazeSize) {
@@ -57,7 +60,7 @@ public class Room {
 	
 	private int mazeDigger(Room previousRoom, int mazeSize) {
 		this.visited = true;
-		if (x == 0 || y == 0 || x == mazeSize - 1 || y == mazeSize - 1) {
+		if (roomColumn == 0 || roomRow == 0 || roomColumn == mazeSize - 1 || roomRow == mazeSize - 1) {
 			distanceFromExit = 1;
 			northWall = false;
 			eastWall = false;

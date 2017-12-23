@@ -11,7 +11,7 @@ public class Character {
 	private double moveSpeed = 0;
 	private double turnRate = 0; // CCW is positive
 	
-	final int CHARACTER_DRAW_RADIUS = 25;
+	final double CHARACTER_RADIUS = 5;
 	final Color CHARACTER_COLOR = Color.ORANGE;
 	
 	private final double MAX_MOVE_SPEED;
@@ -19,6 +19,9 @@ public class Character {
 	
 	private final double MOVE_ACCELERATION;
 	private final double TURN_ACCELERATION;
+	
+	private final double MOVE_ACCELERATION_TIME;
+	private final double TURN_ACCELERATION_TIME;
 
 	private boolean turningLeft = false;
 	private boolean turningRight = false;
@@ -44,15 +47,23 @@ public class Character {
 
 	private final Color characterColor = Color.orange;
 	
+	private boolean startingPointSet = false;
+	
 	public Character(Room startRoom, MazeGame game) {
 		currentRoom = startRoom;
 		this.game = game;
 		
-		MAX_MOVE_SPEED = 100 * game.UPDATE_RATE;
-		MAX_TURN_SPEED = 180 * game.UPDATE_RATE;
+		MAX_MOVE_SPEED = 25 * game.UPDATE_FREQUENCY;
+		MAX_TURN_SPEED = 240 * game.UPDATE_FREQUENCY;
 		
-		MOVE_ACCELERATION = MAX_MOVE_SPEED  * game.UPDATE_RATE / 0.75;
-		TURN_ACCELERATION = MAX_TURN_SPEED  * game.UPDATE_RATE / 0.25;
+		MOVE_ACCELERATION_TIME = 0.8;
+		TURN_ACCELERATION_TIME = 0.4;
+		
+		MOVE_ACCELERATION = MAX_MOVE_SPEED * game.UPDATE_FREQUENCY / MOVE_ACCELERATION_TIME;
+		TURN_ACCELERATION = MAX_TURN_SPEED * game.UPDATE_FREQUENCY / TURN_ACCELERATION_TIME;
+				
+		x = currentRoom.ROOM_WIDTH / 2;
+		y = currentRoom.ROOM_HEIGHT / 2;
 	}
 	
 	public Items currentItem() {
@@ -62,6 +73,15 @@ public class Character {
 	public void updateCharacter() {
 		updateMovement();
 		updateHealth();
+	}
+	
+	void setStartingPoint(double width, double height) {
+		if (!startingPointSet) {
+			this.x = width / 2;
+			this.y = height / 2;
+			
+			startingPointSet = true;
+		}
 	}
 	
 	private void updateMovement() {
@@ -85,6 +105,19 @@ public class Character {
 		
 		x -= moveSpeed * Math.cos(faceAngleDeg * Math.PI / 180);
 		y -= moveSpeed * Math.sin(faceAngleDeg * Math.PI / 180);
+		
+		if (x < CHARACTER_RADIUS) {
+			x = CHARACTER_RADIUS;
+		}
+		if (x > currentRoom.ROOM_WIDTH - CHARACTER_RADIUS) {
+			x = currentRoom.ROOM_WIDTH - CHARACTER_RADIUS;
+		}
+		if (y < CHARACTER_RADIUS) {
+			y = CHARACTER_RADIUS;
+		}
+		if (y > currentRoom.ROOM_HEIGHT - CHARACTER_RADIUS) {
+			y = currentRoom.ROOM_HEIGHT - CHARACTER_RADIUS;
+		}
 	}
 	
 	public void setMovement(AvailableActions direction, boolean isMoving) {
@@ -107,7 +140,7 @@ public class Character {
 	}
 	
 	private void updateHealth() {
-		
+		// Current eating 
 	}
 	
 	public void setHealth(AvailableActions aidType) {
@@ -136,7 +169,7 @@ public class Character {
 	private boolean inventoryContains(Items.ItemTypes itemType) {
 		for(Items item : itemInventory) {
 			if (item.getType() == itemType) {
-				
+				return true;
 			}
 		}
 		return false;
@@ -164,5 +197,17 @@ public class Character {
 	
 	double getY() {
 		return y;
+	}
+	
+	double getFaceAngleDeg() {
+		return faceAngleDeg;
+	}
+	
+	double getMoveSpeed() {
+		return moveSpeed;
+	}
+	
+	double getTurnRate() {
+		return turnRate;
 	}
 }
