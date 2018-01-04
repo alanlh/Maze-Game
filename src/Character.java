@@ -5,8 +5,8 @@ public class Character {
 
 	private MazeGame game;
 	private Room currentRoom;
-	private double x = 0;
-	private double y = 0;
+	
+	private Point position;
 	private double faceAngleDeg = 90;
 	private double moveSpeed = 0;
 	private double turnRate = 0; // CCW is positive
@@ -62,8 +62,7 @@ public class Character {
 		MOVE_ACCELERATION = MAX_MOVE_SPEED * game.UPDATE_FREQUENCY / MOVE_ACCELERATION_TIME;
 		TURN_ACCELERATION = MAX_TURN_SPEED * game.UPDATE_FREQUENCY / TURN_ACCELERATION_TIME;
 				
-		x = currentRoom.ROOM_WIDTH / 2;
-		y = currentRoom.ROOM_HEIGHT / 2;
+		position = new Point(currentRoom.ROOM_WIDTH / 2, currentRoom.ROOM_HEIGHT / 2);
 	}
 	
 	public Items currentItem() {
@@ -76,12 +75,12 @@ public class Character {
 	}
 	
 	void setStartingPoint(double width, double height) {
-		if (!startingPointSet) {
-			this.x = width / 2;
-			this.y = height / 2;
-			
-			startingPointSet = true;
-		}
+//		if (!startingPointSet) {
+//			this.x = width / 2;
+//			this.y = height / 2;
+//			
+//			startingPointSet = true;
+//		}
 	}
 	
 	private void updateMovement() {
@@ -103,21 +102,110 @@ public class Character {
 		
 		faceAngleDeg = (faceAngleDeg + turnRate) % 360;
 		
-		x -= moveSpeed * Math.cos(faceAngleDeg * Math.PI / 180);
-		y -= moveSpeed * Math.sin(faceAngleDeg * Math.PI / 180);
+		position.incrementPoint(- moveSpeed * Math.cos(faceAngleDeg * Math.PI / 180), - moveSpeed * Math.sin(faceAngleDeg * Math.PI / 180));
 		
-		if (x < CHARACTER_RADIUS) {
-			x = CHARACTER_RADIUS;
+		// If the Character is too close to the left/west wall. 
+		if (position.getX() < CHARACTER_RADIUS) {
+			double westTopDistance = position.distanceFrom(currentRoom.WEST_TOP_ENTRANCE);
+			double westBottomDistance = position.distanceFrom(currentRoom.WEST_BOTTOM_ENTRANCE);
+			if (currentRoom.getWestWallBlocked() 
+					|| position.getY() > currentRoom.WEST_BOTTOM_ENTRANCE.getY()
+					|| position.getY() < currentRoom.WEST_TOP_ENTRANCE.getY()) {
+				position.incrementPoint(CHARACTER_RADIUS - position.getX(), 0);
+				
+			} else if (westTopDistance < CHARACTER_RADIUS) {
+				double dislocateRatio = (CHARACTER_RADIUS - westTopDistance) / westTopDistance;
+				position.incrementPoint(dislocateRatio * (position.getX() - currentRoom.WEST_TOP_ENTRANCE.getX()), 
+						dislocateRatio * (position.getY() - currentRoom.WEST_TOP_ENTRANCE.getY()));
+				
+			} else if (westBottomDistance < CHARACTER_RADIUS) {
+				double dislocateRatio = (CHARACTER_RADIUS - westBottomDistance) / westBottomDistance;
+				position.incrementPoint(dislocateRatio * (position.getX() - currentRoom.WEST_BOTTOM_ENTRANCE.getX()), 
+						dislocateRatio * (position.getY() - currentRoom.WEST_BOTTOM_ENTRANCE.getY()));
+				
+			} else if (position.getX() < 0) {
+				currentRoom = currentRoom.getWestRoom();
+				game.mainMap.setRoom(currentRoom);
+				position.invertHorizontal();
+				System.out.println(currentRoom.getX() + " " + currentRoom.getY() + " " + currentRoom.distanceFromExit);
+			}
 		}
-		if (x > currentRoom.ROOM_WIDTH - CHARACTER_RADIUS) {
-			x = currentRoom.ROOM_WIDTH - CHARACTER_RADIUS;
+		// If the Character is too close to the right/east wall. 
+		if (position.getX() > currentRoom.ROOM_WIDTH - CHARACTER_RADIUS) {
+			double eastTopDistance = position.distanceFrom(currentRoom.EAST_TOP_ENTRANCE);
+			double eastBottomDistance = position.distanceFrom(currentRoom.EAST_BOTTOM_ENTRANCE);
+			if (currentRoom.getEastWallBlocked()
+					|| position.getY() > currentRoom.EAST_BOTTOM_ENTRANCE.getY()
+					|| position.getY() < currentRoom.EAST_TOP_ENTRANCE.getY()) {
+				position.incrementPoint(currentRoom.ROOM_WIDTH - position.getX() - CHARACTER_RADIUS, 0);
+				
+			} else if (eastTopDistance < CHARACTER_RADIUS) {
+				double dislocateRatio = (CHARACTER_RADIUS - eastTopDistance) / eastTopDistance;
+				position.incrementPoint(dislocateRatio * (position.getX() - currentRoom.EAST_TOP_ENTRANCE.getX()), 
+						dislocateRatio * (position.getY() - currentRoom.WEST_TOP_ENTRANCE.getY()));
+				
+			} else if (eastBottomDistance < CHARACTER_RADIUS) {
+				double dislocateRatio = (CHARACTER_RADIUS - eastBottomDistance) / eastBottomDistance;
+				position.incrementPoint(dislocateRatio * (position.getX() - currentRoom.EAST_BOTTOM_ENTRANCE.getX()), 
+						dislocateRatio * (position.getY() - currentRoom.EAST_BOTTOM_ENTRANCE.getY()));
+				
+			} else if (position.getX() > currentRoom.ROOM_WIDTH) {
+				currentRoom = currentRoom.getEastRoom();
+				game.mainMap.setRoom(currentRoom);
+				position.invertHorizontal();
+				System.out.println(currentRoom.getX() + " " + currentRoom.getY() + " " + currentRoom.distanceFromExit);
+			}
 		}
-		if (y < CHARACTER_RADIUS) {
-			y = CHARACTER_RADIUS;
+		// If the Character is too close to the north/top wall. 
+		if (position.getY() < CHARACTER_RADIUS) {
+			double northLeftDistance = position.distanceFrom(currentRoom.NORTH_LEFT_ENTRANCE);
+			double northRightDistance = position.distanceFrom(currentRoom.NORTH_RIGHT_ENTRANCE);
+			if (currentRoom.getNorthWallBlocked()
+					|| position.getX() > currentRoom.NORTH_RIGHT_ENTRANCE.getX()
+					|| position.getX() < currentRoom.NORTH_LEFT_ENTRANCE.getX()) {
+				position.incrementPoint(0, CHARACTER_RADIUS - position.getY());
+				
+			} else if (northLeftDistance < CHARACTER_RADIUS) {
+				double dislocateRatio = (CHARACTER_RADIUS - northLeftDistance) / northLeftDistance;
+				position.incrementPoint(dislocateRatio * (position.getX() - currentRoom.NORTH_LEFT_ENTRANCE.getX()), 
+						dislocateRatio * (position.getY() - currentRoom.NORTH_LEFT_ENTRANCE.getY()));
+			} else if (northRightDistance < CHARACTER_RADIUS) {
+				double dislocateRatio = (CHARACTER_RADIUS - northRightDistance) / northRightDistance;
+				position.incrementPoint(dislocateRatio * (position.getX() - currentRoom.NORTH_RIGHT_ENTRANCE.getX()), 
+						dislocateRatio * (position.getY() - currentRoom.NORTH_RIGHT_ENTRANCE.getY()));
+			} else if (position.getY() < 0) {
+				currentRoom = currentRoom.getNorthRoom();
+				game.mainMap.setRoom(currentRoom);
+				position.invertVertical();
+				System.out.println(currentRoom.getX() + " " + currentRoom.getY() + " " + currentRoom.distanceFromExit);
+			}
 		}
-		if (y > currentRoom.ROOM_HEIGHT - CHARACTER_RADIUS) {
-			y = currentRoom.ROOM_HEIGHT - CHARACTER_RADIUS;
+		// If the Character is too close to the bottom/south wall. 
+		if (position.getY() > currentRoom.ROOM_HEIGHT - CHARACTER_RADIUS) {
+			double southLeftDistance = position.distanceFrom(currentRoom.SOUTH_LEFT_ENTRANCE);
+			double southRightDistance = position.distanceFrom(currentRoom.SOUTH_RIGHT_ENTRANCE);
+			if (currentRoom.getSouthWallBlocked()
+					|| position.getX() > currentRoom.SOUTH_RIGHT_ENTRANCE.getX()
+					|| position.getX() < currentRoom.SOUTH_LEFT_ENTRANCE.getX()) {
+				position.incrementPoint(0, currentRoom.ROOM_HEIGHT - position.getY() - CHARACTER_RADIUS);
+				
+			} else if (southLeftDistance < CHARACTER_RADIUS) {
+				double dislocateRatio = (CHARACTER_RADIUS - southLeftDistance) / southLeftDistance;
+				position.incrementPoint(dislocateRatio * (position.getX() - currentRoom.SOUTH_LEFT_ENTRANCE.getX()), 
+						dislocateRatio * (position.getY() - currentRoom.SOUTH_LEFT_ENTRANCE.getY()));
+			} else if (southRightDistance < CHARACTER_RADIUS) {
+				double dislocateRatio = (CHARACTER_RADIUS - southRightDistance) / southRightDistance;
+				position.incrementPoint(dislocateRatio * (position.getX() - currentRoom.SOUTH_RIGHT_ENTRANCE.getX()), 
+						dislocateRatio * (position.getY() - currentRoom.SOUTH_RIGHT_ENTRANCE.getY()));
+			} else if (position.getY() > currentRoom.ROOM_HEIGHT) {
+				currentRoom = currentRoom.getSouthRoom();
+				game.mainMap.setRoom(currentRoom);
+				position.invertVertical();
+				System.out.println(currentRoom.getX() + " " + currentRoom.getY() + " " + currentRoom.distanceFromExit);
+			}
 		}
+		
+		// If current room is border room, then win!
 	}
 	
 	public void setMovement(AvailableActions direction, boolean isMoving) {
@@ -191,12 +279,8 @@ public class Character {
 		return candleCount;
 	}
 	
-	double getX() {
-		return x;
-	}
-	
-	double getY() {
-		return y;
+	Point getPosition() {
+		return position;
 	}
 	
 	double getFaceAngleDeg() {

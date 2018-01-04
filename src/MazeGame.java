@@ -59,7 +59,7 @@ public class MazeGame extends JPanel {
 	MainMap mainMap;
 	JPanel characterInfoPanel;
 	
-	final double UPDATE_FREQUENCY = 1.0/24.0;
+	final double UPDATE_FREQUENCY = 1.0/48.0;
 	final int MAX_UPDATES_PER_RENDER = 5;
 	final int MAX_RENDERS_PER_UPDATE = 50;
 	

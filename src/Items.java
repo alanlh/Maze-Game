@@ -15,15 +15,13 @@ public abstract class Items {
 	}
 	
 	
-	private int x;
-	private int y;
+	private Point position;
 	private Room room;
 	private State state;
 	
-	public Items (Room room, int x, int y, State itemState) {
+	public Items (Room room, Point position, State itemState) {
 		this.room = room;
-		this.x = x;
-		this.y = y;
+		this.position = position;
 		this.state = itemState;
 	}
 

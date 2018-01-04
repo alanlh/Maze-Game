@@ -83,7 +83,6 @@ public class PlayerAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println(action);
 		actionHandleQueue.add(action);
 	}
 
