@@ -33,7 +33,7 @@ public class GamePanel extends JPanel {
 	
 	MapPanel mapPanel;
 	CharacterPanel characterPanel;
-	ButtonsPanel buttonsPanel;
+	ItemsPanel itemsPanel;
 			
 	public GamePanel() {
 		this.requestFocus();
@@ -44,7 +44,7 @@ public class GamePanel extends JPanel {
 			
 			mapPanel = new MapPanel();
 			characterPanel = new CharacterPanel();
-			buttonsPanel = new ButtonsPanel();
+			itemsPanel = new ItemsPanel();
 			
 			this.add(introPanel);
 			introPanel.startIntro();
@@ -60,7 +60,7 @@ public class GamePanel extends JPanel {
 		this.game = game;
 		mapPanel.setGameStatus(gameStatus);
 		characterPanel.setGameStatus(gameStatus);
-		buttonsPanel.setGameStatus(gameStatus);
+		itemsPanel.setGameStatus(gameStatus);
 	}
 	
 	// TODO: DO SOMETHING WITH THIS
@@ -79,7 +79,7 @@ public class GamePanel extends JPanel {
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightx = 0.15;
 		constraints.weighty = 0.8;
-		this.add(buttonsPanel, constraints);
+		this.add(itemsPanel, constraints);
 		
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.weightx = 0.85;
@@ -98,7 +98,7 @@ public class GamePanel extends JPanel {
 		
 		mapPanel.initialize();
 		characterPanel.initialize();
-		buttonsPanel.initialize();
+		itemsPanel.initialize();
 		
 		repaint();
 		revalidate();
@@ -169,7 +169,7 @@ public class GamePanel extends JPanel {
 		if (gameStatus != null && gameStatus.getRunning()) {
 			mapPanel.repaint();
 			characterPanel.repaint();
-			buttonsPanel.repaint();
+			itemsPanel.repaint();
 		}
 	}
 }

@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Queue;
 
 import javax.swing.AbstractAction;
@@ -20,7 +21,7 @@ public class PlayerAction extends AbstractAction {
 		this.actionType = action;
 	}
 
-	public static volatile ArrayList<AvailableActions> actionHandleQueue = new ArrayList<>();
+	public static volatile LinkedList<AvailableActions> actionHandleQueue = new LinkedList<>();
 	
 	public static void addAction(AvailableActions action) {
 		System.out.println(action);

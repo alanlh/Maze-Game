@@ -66,7 +66,7 @@ public class IntroPanel extends JPanel {
 		for (int i = 0; i < textDump.length; i ++) {
 			// So that testing is faster
 			// TODO: DELETE WHEN DONE
-			delayTimesMilliSec[i] = 25;
+			delayTimesMilliSec[i] = 5;
 			
 			textDump[i].setFont(textFont);
 			textDump[i].setAlignmentX(CENTER_ALIGNMENT);

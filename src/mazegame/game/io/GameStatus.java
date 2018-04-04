@@ -1,8 +1,10 @@
 package mazegame.game.io;
 
 import mazegame.game.logic.Room;
+import mazegame.game.logic.items.Items;
 
 import java.awt.Color;
+import java.util.LinkedList;
 
 import mazegame.game.logic.Character;
 
@@ -122,12 +124,16 @@ public class GameStatus {
 	
 	
 	// Lesser used attributes
+	// TODO: Figure out how to setup a listener. 
 	private volatile Color playerColor = Color.RED;
 	private volatile double playerSize = 0;
+	private volatile int playerInventorySize = 10;
 	public void setPlayerAttributes(Color playerColor,
-									double playerSize) {
+									double playerSize,
+									int playerInventorySize) {
 		this.playerColor = playerColor;
 		this.playerSize = playerSize;
+		this.playerInventorySize = playerInventorySize;
 	}
 	public Color getPlayerColor() {
 		return playerColor;
@@ -135,4 +141,33 @@ public class GameStatus {
 	public double getPlayerSize() {
 		return playerSize;
 	}
+	public int getInventorySize() {
+		return playerInventorySize;
+	}
+	
+	// --- VARIABLES RELATED TO ITEMS --- //
+
+	volatile LinkedList<Items> currentPlayerInventory;
+	volatile boolean changedSinceLastRefresh = true;
+	public void setPlayerInventory(LinkedList<Items> inventoryPointer) {
+		currentPlayerInventory = inventoryPointer;
+		changedSinceLastRefresh = true;
+	}
+	
+	public boolean getItemsChanged() {
+		return changedSinceLastRefresh;
+	}
+	
+	// Called by ItemsPanel to alert when an icon has been clicked
+	public void alertItemClicked(int index) {
+		
+	}
+	
+	private Items getPlayerItem(int index) {
+		if (currentPlayerInventory == null) {
+			return null;
+		}
+		return currentPlayerInventory.get(index);
+	}
+	
 }

@@ -1,10 +1,12 @@
 package mazegame.game.logic;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import mazegame.game.io.AvailableActions;
 import mazegame.game.io.GameLoop;
 import mazegame.game.io.GameStatus;
+import mazegame.game.logic.items.Items;
 
 public class Character {
 
@@ -35,7 +37,7 @@ public class Character {
 	private boolean movingForward = false;
 	private boolean movingBackwards = false;
 	
-	private ArrayList<Items> itemInventory = new ArrayList<>();
+	private LinkedList<Items> itemInventory = new LinkedList<>();
 	private final int MAX_INVENTORY_SIZE = 10;
 	
 	private double hunger = 0;
@@ -75,7 +77,7 @@ public class Character {
 				
 		position = new Point(currentRoom.ROOM_WIDTH / 2, currentRoom.ROOM_HEIGHT / 2);
 		
-		status.setPlayerAttributes(characterColor, CHARACTER_RADIUS);
+		status.setPlayerAttributes(characterColor, CHARACTER_RADIUS, MAX_INVENTORY_SIZE);
 	}
 	
 	public Items currentItem() {
@@ -242,7 +244,13 @@ public class Character {
 		// Current eating 
 	}
 	
-	public void setHealth(AvailableActions aidType) {
+	/**
+	 * Replace this later with a direct call to the consume function. 
+	 * 
+	 * TODO: THIS NEEDS TO BE RESTRUCTURED. 
+	 * @param aidType
+	 */
+	public void setHealth(AvailableActions aidType) {				
 		/**
 		 * This should eventually be replaced with creating a bar with an icon of each type of food,
 		 * So that the player can select the specific type.
@@ -250,19 +258,41 @@ public class Character {
 		 * However, this implementation should assume that food types are different. 
 		 */
 		if (aidType == AvailableActions.CONSUME_FOOD) {
-			if (foodCount > 0) {
-				currentEating += FOOD_VALUE;
+			if (inventoryContains(Items.Type.FOOD)) {
+				consumeFood();
 			} else {
 				// TODO: Display message to player
 			}
 		} else if (aidType == AvailableActions.APPLY_FIRST_AID) {
-			if (inventoryContains(Items.Type.AID)) {
-				
+			if (inventoryContains(Items.Type.HEAL)) {
+				applyFirstAid();
 			} else {
 				
 			}
 		}
 		
+	}
+	
+	/**
+	 * Finds the topmost food item in the inventory and applies its effects. Assumes there is a food item. 
+	 */
+	public void consumeFood() {
+		for (int i = itemInventory.size() - 1; i >= 0; i --) {
+			if (itemInventory.get(i) != null && itemInventory.get(i).getType() == Items.Type.FOOD) {
+				
+			}
+		}
+	}
+	
+	/**
+	 * Finds the topmost aid item in the inventory and applies its effects. Assumes there is an aid item. 
+	 */
+	public void applyFirstAid() {
+		for (int i = itemInventory.size() - 1; i >= 0; i --) {
+			if (itemInventory.get(i) != null && itemInventory.get(i).getType() == Items.Type.HEAL) {
+				
+			}
+		}
 	}
 	
 	private boolean inventoryContains(Items.Type itemType) {

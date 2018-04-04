@@ -15,7 +15,6 @@ public class MapPanel extends JPanel {
 		
 	private final double WALL_BOUNDARY_PROPORTION = 0.9;
 	private final double DOORWAY_PROPORTION = 0.2;
-	private final int DOOR_SIZE = 150;
 		
 	private int leftBoundary;
 	private int rightBoundary;
@@ -51,14 +50,6 @@ public class MapPanel extends JPanel {
 		repaint();
 	}
 	
-//	void displayGame(double interpolation) {
-//		
-//		// https://stackoverflow.com/questions/10966821/appropriate-way-to-draw-to-a-jpanel-for-2d-game-development
-//				
-//		drawRoom(graphics);
-//		drawCharacter(backBufferGraphics, interpolation);		
-//	}
-
 	private int drawRoom(Graphics graphics) {
 		if (gameStatus == null || !gameStatus.getRoomInitialized()) {
 			return 0;

@@ -101,10 +101,10 @@ public class MazeGame {
 				player.setMovement(AvailableActions.LEFT, false);
 				break;
 			case CONSUME_FOOD:
-				player.setHealth(AvailableActions.CONSUME_FOOD);
+				player.consumeFood();
 				break;
 			case APPLY_FIRST_AID:
-				player.setHealth(AvailableActions.APPLY_FIRST_AID);
+				player.applyFirstAid();
 				break;
 			case HOLD_STICK:
 				break;

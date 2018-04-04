@@ -2,6 +2,8 @@ package mazegame.game.logic;
 import java.util.ArrayList;
 import java.util.Random;
 
+import mazegame.game.logic.items.Items;
+
 public class Room {
 	
 	static Random random = new Random();
