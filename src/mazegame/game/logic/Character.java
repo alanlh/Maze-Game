@@ -58,6 +58,14 @@ public class Character {
 	
 	private boolean startingPointSet = false;
 	
+	/**
+	 * Constructor for a Player character
+	 * 
+	 * @param game			The game the character belongs to.
+	 * 						Allows character to influence environment
+	 * @param status		A status class that keeps track of all game variables.
+	 * @param startRoom		The starting room of the character
+	 */
 	public Character(MazeGame game, GameStatus status, Room startRoom) {
 		this.game = game;
 		this.status = status;
@@ -94,6 +102,13 @@ public class Character {
 										faceAngleDeg);
 	}
 		
+	/**
+	 * Updates the position, velocity, and direction of the player character.
+	 * First changes location based off of velocity and direction
+	 * Then, account for wall collision.
+	 * 
+	 * TODO: Turn collision handling into separate method? 
+	 */
 	private void updateMovement() {
 		if (movingForward == movingBackwards) {			
 			moveSpeed = (moveSpeed > 0) ? Math.max(moveSpeed - MOVE_ACCELERATION, 0) : Math.min(moveSpeed + MOVE_ACCELERATION, 0);
@@ -122,9 +137,11 @@ public class Character {
 			if (currentRoom.getWestWallBlocked() 
 					|| position.getY() > currentRoom.WEST_BOTTOM_ENTRANCE.getY()
 					|| position.getY() < currentRoom.WEST_TOP_ENTRANCE.getY()) {
+				// If the character is hitting the wall
 				position.incrementPoint(CHARACTER_RADIUS - position.getX(), 0);
 				
 			} else if (westTopDistance < CHARACTER_RADIUS) {
+				// If the character is hitting the corner of the wall
 				double dislocateRatio = (CHARACTER_RADIUS - westTopDistance) / westTopDistance;
 				position.incrementPoint(dislocateRatio * (position.getX() - currentRoom.WEST_TOP_ENTRANCE.getX()), 
 						dislocateRatio * (position.getY() - currentRoom.WEST_TOP_ENTRANCE.getY()));
@@ -135,6 +152,7 @@ public class Character {
 						dislocateRatio * (position.getY() - currentRoom.WEST_BOTTOM_ENTRANCE.getY()));
 				
 			} else if (position.getX() < 0) {
+				// Move to left room
 				currentRoom = currentRoom.getWestRoom();
 				status.setCharacterRoom(currentRoom);
 				position.invertHorizontal(currentRoom);
@@ -148,9 +166,11 @@ public class Character {
 			if (currentRoom.getEastWallBlocked()
 					|| position.getY() > currentRoom.EAST_BOTTOM_ENTRANCE.getY()
 					|| position.getY() < currentRoom.EAST_TOP_ENTRANCE.getY()) {
+				// If the character is hitting the wall
 				position.incrementPoint(currentRoom.ROOM_WIDTH - position.getX() - CHARACTER_RADIUS, 0);
 				
 			} else if (eastTopDistance < CHARACTER_RADIUS) {
+				// If the character is hitting the corner of the wall
 				double dislocateRatio = (CHARACTER_RADIUS - eastTopDistance) / eastTopDistance;
 				position.incrementPoint(dislocateRatio * (position.getX() - currentRoom.EAST_TOP_ENTRANCE.getX()), 
 						dislocateRatio * (position.getY() - currentRoom.WEST_TOP_ENTRANCE.getY()));
@@ -161,6 +181,7 @@ public class Character {
 						dislocateRatio * (position.getY() - currentRoom.EAST_BOTTOM_ENTRANCE.getY()));
 				
 			} else if (position.getX() > currentRoom.ROOM_WIDTH) {
+				// Move to left room
 				currentRoom = currentRoom.getEastRoom();
 				status.setCharacterRoom(currentRoom);
 				position.invertHorizontal(currentRoom);
@@ -174,9 +195,11 @@ public class Character {
 			if (currentRoom.getNorthWallBlocked()
 					|| position.getX() > currentRoom.NORTH_RIGHT_ENTRANCE.getX()
 					|| position.getX() < currentRoom.NORTH_LEFT_ENTRANCE.getX()) {
+				// If the character is hitting the wall
 				position.incrementPoint(0, CHARACTER_RADIUS - position.getY());
 				
 			} else if (northLeftDistance < CHARACTER_RADIUS) {
+				// If the character is hitting the corner of the wall
 				double dislocateRatio = (CHARACTER_RADIUS - northLeftDistance) / northLeftDistance;
 				position.incrementPoint(dislocateRatio * (position.getX() - currentRoom.NORTH_LEFT_ENTRANCE.getX()), 
 						dislocateRatio * (position.getY() - currentRoom.NORTH_LEFT_ENTRANCE.getY()));
@@ -185,6 +208,7 @@ public class Character {
 				position.incrementPoint(dislocateRatio * (position.getX() - currentRoom.NORTH_RIGHT_ENTRANCE.getX()), 
 						dislocateRatio * (position.getY() - currentRoom.NORTH_RIGHT_ENTRANCE.getY()));
 			} else if (position.getY() < 0) {
+				// Move to left room
 				currentRoom = currentRoom.getNorthRoom();
 				status.setCharacterRoom(currentRoom);
 				position.invertVertical(currentRoom);
@@ -198,6 +222,7 @@ public class Character {
 			if (currentRoom.getSouthWallBlocked()
 					|| position.getX() > currentRoom.SOUTH_RIGHT_ENTRANCE.getX()
 					|| position.getX() < currentRoom.SOUTH_LEFT_ENTRANCE.getX()) {
+				// If the character is hitting the wall
 				position.incrementPoint(0, currentRoom.ROOM_HEIGHT - position.getY() - CHARACTER_RADIUS);
 				
 			} else if (southLeftDistance < CHARACTER_RADIUS) {
@@ -209,6 +234,7 @@ public class Character {
 				position.incrementPoint(dislocateRatio * (position.getX() - currentRoom.SOUTH_RIGHT_ENTRANCE.getX()), 
 						dislocateRatio * (position.getY() - currentRoom.SOUTH_RIGHT_ENTRANCE.getY()));
 			} else if (position.getY() > currentRoom.ROOM_HEIGHT) {
+				// Move to left room
 				currentRoom = currentRoom.getSouthRoom();
 				status.setCharacterRoom(currentRoom);
 				position.invertVertical(currentRoom);
@@ -221,6 +247,15 @@ public class Character {
 		}
 	}
 	
+	/**
+	 * Sets updates the moving direction of the player character.
+	 * Does not affect the position of the character
+	 * 
+	 * @param direction: 	A enum describing which direction the player is moving
+	 * 						Depends on which key was pressed.
+	 * @param isMoving: 	Whether to start or stop moving in that direction.
+	 * 						If key was pressed, true. If released, false.
+	 */
 	public void setMovement(AvailableActions direction, boolean isMoving) {
 		switch (direction) {
 		case FORWARD: 
@@ -303,6 +338,8 @@ public class Character {
 		}
 		return false;
 	}
+	
+	// Placeholder getter methods. Not sure if needed or not. 
 	
 	private int getFoodCount() {
 		return foodCount;
