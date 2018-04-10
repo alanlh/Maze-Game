@@ -17,9 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import mazegame.game.io.AvailableActions;
 import mazegame.game.io.GameStatus;
-import mazegame.game.io.PlayerAction;
+import mazegame.game.io.Actions;
 import mazegame.game.logic.Maze;
 import mazegame.game.logic.MazeGame;
 

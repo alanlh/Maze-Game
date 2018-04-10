@@ -3,10 +3,8 @@ package mazegame.game.logic;
 // https://stackoverflow.com/questions/12021249/adding-jpanel-from-another-class-to-jpanel-in-jframe
 // http://www.java-gaming.org/index.php?topic=25864.0
 
-import mazegame.game.io.AvailableActions;
 import mazegame.game.io.GameLoop;
 import mazegame.game.io.GameStatus;
-import mazegame.game.io.PlayerAction;
 import mazegame.game.ui.GamePanel;
 
 
@@ -63,60 +61,14 @@ public class MazeGame {
 	 * Updates map and player. 
 	 */
 	public void update() {
-		executeCommands();
 		player.update();
 		map.update();
 	}
-	
-	/**
-	 * There just has to be a cleaner structure for doing this.
-	 */
-	public void executeCommands() {
-		int actionsPerformed = 0;
-		while (actionsPerformed < MAX_ACTIONS_PER_UPDATE && !PlayerAction.actionHandleQueue.isEmpty()) {
-			AvailableActions action = PlayerAction.actionHandleQueue.remove(0);
-			switch (action) {
-			case FORWARD:
-				player.setMovement(AvailableActions.FORWARD, true);
-				break;
-			case FORWARD_STOP:
-				player.setMovement(AvailableActions.FORWARD, false);
-				break;
-			case BACK:
-				player.setMovement(AvailableActions.BACK, true);
-				break;
-			case BACK_STOP:
-				player.setMovement(AvailableActions.BACK, false);
-				break;
-			case RIGHT:
-				player.setMovement(AvailableActions.RIGHT, true);
-				break;
-			case RIGHT_STOP:
-				player.setMovement(AvailableActions.RIGHT, false);
-				break;
-			case LEFT:
-				player.setMovement(AvailableActions.LEFT, true);
-				break;
-			case LEFT_STOP:
-				player.setMovement(AvailableActions.LEFT, false);
-				break;
-			case CONSUME_FOOD:
-				player.consumeFood();
-				break;
-			case APPLY_FIRST_AID:
-				player.applyFirstAid();
-				break;
-			case HOLD_STICK:
-				break;
-			case LIGHT_CANDLE:
-				break;
-			case SPECIAL_COMMAND:
-				break;
-			case PICK_ITEM:
-				break;
-			}
-			actionsPerformed++;
-		}
+		
+	private void findItem() {
+		// First get game coordinates from screen coordinates
+		// Then search through room to see if there are any items there
+		// If match, then give it to character, remove from room.
 	}
 	
 	public Character getCharacter() {

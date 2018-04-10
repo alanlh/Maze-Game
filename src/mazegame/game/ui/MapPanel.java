@@ -1,11 +1,15 @@
 package mazegame.game.ui;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import mazegame.game.io.GameStatus;
+import mazegame.game.io.Actions;
 import mazegame.game.logic.Character;
 import mazegame.game.logic.Room;
 
@@ -36,7 +40,25 @@ public class MapPanel extends JPanel {
 	
 	void initialize() {
 		this.setVisible(true);
+		addMouseListener();
 	}
+	
+	/**
+	 * Adds a mouse listener for clicking. 
+	 */
+	private void addMouseListener() {
+		this.addMouseListener(new MouseAdapter() {			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (SwingUtilities.isLeftMouseButton(e)) {
+					// Evaluate in-game coordinates, and search through character's room
+				} else if (SwingUtilities.isRightMouseButton(e)) {
+					// Same as before
+				}
+			}
+		});
+	}
+
 	
 	@Override
 	public void paintComponent(Graphics g) {

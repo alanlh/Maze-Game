@@ -3,9 +3,9 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import mazegame.game.io.AvailableActions;
 import mazegame.game.io.GameLoop;
 import mazegame.game.io.GameStatus;
+import mazegame.game.io.Actions;
 import mazegame.game.logic.items.Items;
 
 public class Character {
@@ -243,7 +243,7 @@ public class Character {
 		}
 		
 		if (currentRoom.isBorderRoom()) {
-			game.displayWinMessage();
+			status.setWin(true);
 		}
 	}
 	
@@ -256,7 +256,7 @@ public class Character {
 	 * @param isMoving: 	Whether to start or stop moving in that direction.
 	 * 						If key was pressed, true. If released, false.
 	 */
-	public void setMovement(AvailableActions direction, boolean isMoving) {
+	public void setMovement(Actions direction, boolean isMoving) {
 		switch (direction) {
 		case FORWARD: 
 			movingForward = isMoving;
@@ -285,20 +285,20 @@ public class Character {
 	 * TODO: THIS NEEDS TO BE RESTRUCTURED. 
 	 * @param aidType
 	 */
-	public void setHealth(AvailableActions aidType) {				
+	public void setHealth(Actions aidType) {				
 		/**
 		 * This should eventually be replaced with creating a bar with an icon of each type of food,
 		 * So that the player can select the specific type.
 		 * This means that each food type should have different properties.
 		 * However, this implementation should assume that food types are different. 
 		 */
-		if (aidType == AvailableActions.CONSUME_FOOD) {
+		if (aidType == Actions.CONSUME_FOOD) {
 			if (inventoryContains(Items.Type.FOOD)) {
 				consumeFood();
 			} else {
 				// TODO: Display message to player
 			}
-		} else if (aidType == AvailableActions.APPLY_FIRST_AID) {
+		} else if (aidType == Actions.APPLY_FIRST_AID) {
 			if (inventoryContains(Items.Type.HEAL)) {
 				applyFirstAid();
 			} else {

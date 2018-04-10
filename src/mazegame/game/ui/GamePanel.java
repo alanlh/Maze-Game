@@ -6,9 +6,11 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JLabel;
@@ -16,10 +18,10 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import mazegame.game.io.AvailableActions;
 import mazegame.game.io.GameStatus;
-import mazegame.game.io.PlayerAction;
+import mazegame.game.io.Actions;
 import mazegame.game.logic.MazeGame;
+import mazegame.game.logic.Character;
 
 
 public class GamePanel extends JPanel {
@@ -69,9 +71,6 @@ public class GamePanel extends JPanel {
 		
 		this.requestFocus();
 		
-		addKeyBindings();
-		addMouseListener();
-
 		this.setLayout(new GridBagLayout());
 		
 		GridBagConstraints constraints = new GridBagConstraints();
@@ -100,10 +99,12 @@ public class GamePanel extends JPanel {
 		characterPanel.initialize();
 		itemsPanel.initialize();
 		
+		game.initialize();
+		
+		addKeyBindings();
+
 		repaint();
 		revalidate();
-		
-		game.initialize();
 	}
 	
 	
@@ -111,51 +112,57 @@ public class GamePanel extends JPanel {
 	 * Adds key bindings to used keys (WASD)
 	 */
 	private void addKeyBindings() {
+		
 		InputMap inputMap = this.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 		ActionMap actionMap = this.getActionMap();
 						
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, false), AvailableActions.FORWARD);
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, true), AvailableActions.FORWARD_STOP);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, false), Actions.FORWARD);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, true), Actions.FORWARD_STOP);
 		
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0, false), AvailableActions.BACK);
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0, true), AvailableActions.BACK_STOP);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0, false), Actions.BACK);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0, true), Actions.BACK_STOP);
 		
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false), AvailableActions.LEFT);
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true), AvailableActions.LEFT_STOP);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false), Actions.RIGHT);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true), Actions.RIGHT_STOP);
 		
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false), AvailableActions.RIGHT);
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true), AvailableActions.RIGHT_STOP);
-		
-		actionMap.put(AvailableActions.FORWARD, new PlayerAction(AvailableActions.FORWARD));
-		actionMap.put(AvailableActions.FORWARD_STOP, new PlayerAction(AvailableActions.FORWARD_STOP));
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false), Actions.LEFT);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true), Actions.LEFT_STOP);
 
-		actionMap.put(AvailableActions.BACK, new PlayerAction(AvailableActions.BACK));
-		actionMap.put(AvailableActions.BACK_STOP, new PlayerAction(AvailableActions.BACK_STOP));
+		actionMap.put(Actions.FORWARD, new MovementAction(game, Actions.FORWARD, true));
+		actionMap.put(Actions.FORWARD_STOP, new MovementAction(game, Actions.FORWARD, false));
 
-		actionMap.put(AvailableActions.LEFT, new PlayerAction(AvailableActions.LEFT));
-		actionMap.put(AvailableActions.LEFT_STOP, new PlayerAction(AvailableActions.LEFT_STOP));
+		actionMap.put(Actions.BACK, new MovementAction(game, Actions.BACK, true));
+		actionMap.put(Actions.BACK_STOP, new MovementAction(game, Actions.BACK, false));
 
-		actionMap.put(AvailableActions.RIGHT, new PlayerAction(AvailableActions.RIGHT));
-		actionMap.put(AvailableActions.RIGHT_STOP, new PlayerAction(AvailableActions.RIGHT_STOP));	
+		actionMap.put(Actions.LEFT, new MovementAction(game, Actions.LEFT, true));
+		actionMap.put(Actions.LEFT_STOP, new MovementAction(game, Actions.LEFT, false));
+
+		actionMap.put(Actions.RIGHT, new MovementAction(game, Actions.RIGHT, true));
+		actionMap.put(Actions.RIGHT_STOP, new MovementAction(game, Actions.RIGHT, false));	
 	}
-
+	
 	/**
-	 * Adds a mouse listener for clicking. 
+	 * AbstractAction class that calls the setMovement method for the player character
+	 * whenever a key is pressed. 
 	 */
-	private void addMouseListener() {
-		this.addMouseListener(new MouseAdapter() {
-			PlayerAction leftClick = new PlayerAction(AvailableActions.PICK_ITEM);
-			PlayerAction rightClick = new PlayerAction(AvailableActions.SPECIAL_COMMAND);
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (SwingUtilities.isLeftMouseButton(e)) {
-					leftClick.actionPerformed(e);
-				} else if (SwingUtilities.isRightMouseButton(e)) {
-					rightClick.actionPerformed(e);
-				}
+	class MovementAction extends AbstractAction {
+		MazeGame game;
+		Actions type;
+		boolean pressed;
+		
+		public MovementAction(MazeGame game, Actions type, boolean pressed) {
+			this.game = game;
+			this.type = type;
+			this.pressed = pressed;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (game.getCharacter() != null) {
+				// Safety check
+				game.getCharacter().setMovement(type, pressed);
 			}
-		});
+		}
 	}
 
 	/**
