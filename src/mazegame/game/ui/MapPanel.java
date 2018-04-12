@@ -11,6 +11,7 @@ import javax.swing.SwingUtilities;
 import mazegame.game.io.GameStatus;
 import mazegame.game.io.Actions;
 import mazegame.game.logic.Character;
+import mazegame.game.logic.Point;
 import mazegame.game.logic.Room;
 
 public class MapPanel extends JPanel {
@@ -50,10 +51,19 @@ public class MapPanel extends JPanel {
 		this.addMouseListener(new MouseAdapter() {			
 			@Override
 			public void mousePressed(MouseEvent e) {
+				int x = e.getX();
+				int y = e.getY();
+				
+				Point coord = convertToMapCoordinates(x, y);
+				
+				Character player = gameStatus.getGameReference().getCharacter();
+
 				if (SwingUtilities.isLeftMouseButton(e)) {
 					// Evaluate in-game coordinates, and search through character's room
+					// TODO: player.pickUp(Point)
 				} else if (SwingUtilities.isRightMouseButton(e)) {
 					// Same as before
+					// TODO: player._____
 				}
 			}
 		});
@@ -63,21 +73,26 @@ public class MapPanel extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		int minDimension = drawRoom(g);
+		drawRoom(g);
 		
 		// Interpolation accessed here to have a consistent value for each drawing. Possibly faster? I don't know.
 		double interpolation = gameStatus.getInterpolation();
 		
-		drawCharacter(g, interpolation, minDimension);
+		drawCharacter(g, interpolation);
 		repaint();
 	}
 	
-	private int drawRoom(Graphics graphics) {
+	/**
+	 * Draws the room the character is currently in. 
+	 * 
+	 * @param graphics default graphics object
+	 */
+	private void drawRoom(Graphics graphics) {
 		if (gameStatus == null || !gameStatus.getRoomInitialized()) {
-			return 0;
+			return;
 		}
 		
-		int wallMinDimension = (int) (WALL_BOUNDARY_PROPORTION * Math.min(this.getWidth(),  this.getHeight()));
+		int wallMinDimension = computeMinDimension();
 				
 		leftBoundary = (int) ((this.getWidth() - wallMinDimension) / 2);
 		rightBoundary = (int) ((this.getWidth() + wallMinDimension) / 2);
@@ -125,28 +140,34 @@ public class MapPanel extends JPanel {
 			graphics.drawLine(leftBoundary, bottomBoundary, leftEntrancePoint, bottomBoundary);
 			graphics.drawLine(rightBoundary, bottomBoundary, rightEntrancePoint, bottomBoundary);
 		}
-		return wallMinDimension;
 	}
 	
 	/**
-	 * Draws a player character, a circle with two eyes. 
+	 * Draws a player character, a circle with two eyes for now
+	 * 
+	 * TODO: Figure out how to import a PNG or other image
 	 *  
-	 * @param graphics
+	 * @param default graphics object
 	 * @param interpolation to decide where to draw it specifically. 
 	 */
-	private void drawCharacter(Graphics graphics, double interpolation, int minDimension){				
+	private void drawCharacter(Graphics graphics, double interpolation){				
 		if (gameStatus == null || !gameStatus.getPlayerReady()) {
 			return;
 		}
 		
+		int minDimension = computeMinDimension();
+		
 		double facingAngleRad = (gameStatus.getPlayerAngle()) * Math.PI / 180;
-				
+		
+		// Computing player location
+		// TODO: Convert to returning Point
 		double playerCenterPointX = convertToPanelWidth(gameStatus.getPlayerX(interpolation), minDimension);
 		double playerCenterPointY = convertToPanelHeight(gameStatus.getPlayerY(interpolation), minDimension);
 						
 		double playerRadius = gameStatus.getPlayerSize() * minDimension;
 		playerRadius /= (getWidth() < getHeight()) ? gameStatus.getRoomWidth() : gameStatus.getRoomHeight();
 		
+		// Draws character
 		graphics.setColor(gameStatus.getPlayerColor());
 		graphics.fillOval((int) (playerCenterPointX - playerRadius), 
 				(int) (playerCenterPointY - playerRadius), 
@@ -164,12 +185,44 @@ public class MapPanel extends JPanel {
 				4);
 	}
 	
+	/**
+	 * Converts the room coordinates into x coordinate of where to draw on screen.
+	 * 
+	 * TODO: Turn this to accept and return a Point Object
+	 * TODO: Figure out if should call computeMinDimension() instead of passing in minDimension
+	 * @param mapCoordinate
+	 * @param minDimension
+	 * @return
+	 */
 	private double convertToPanelWidth(double mapCoordinate, double minDimension) {		
 		return leftBoundary + mapCoordinate * minDimension / gameStatus.getRoomWidth();
 	}
 	
+	/**
+	 * Same as above but for height
+	 * 
+	 * @param mapCoordinate
+	 * @param minDimension
+	 * @return
+	 */
 	private double convertToPanelHeight(double mapCoordinate, double minDimension) {		
 		return topBoundary + mapCoordinate * minDimension / gameStatus.getRoomHeight();
+	}
+	
+	private Point convertToMapCoordinates(int x, int y) {
+		int minDimension = computeMinDimension();
+		double xRoom = (x - leftBoundary) * gameStatus.getRoomWidth() / minDimension;
+		double yRoom = (y - topBoundary) * gameStatus.getRoomHeight() / minDimension;
+		return new Point(xRoom, yRoom);
+	}
+	
+	/**
+	 * Computes the pixel length of the room, which varies based off of the window size
+	 * 
+	 * @return the pixel dimension of the room
+	 */
+	private int computeMinDimension() {
+		return (int) (WALL_BOUNDARY_PROPORTION * Math.min(this.getWidth(),  this.getHeight()));
 	}
 		
 	int getLeftBoundary() {

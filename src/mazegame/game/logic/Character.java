@@ -32,11 +32,6 @@ public class Character {
 	private final double MOVE_ACCELERATION_TIME;
 	private final double TURN_ACCELERATION_TIME;
 
-	private boolean turningLeft = false;
-	private boolean turningRight = false;
-	private boolean movingForward = false;
-	private boolean movingBackwards = false;
-	
 	private LinkedList<Items> itemInventory = new LinkedList<>();
 	private final int MAX_INVENTORY_SIZE = 10;
 	
@@ -110,6 +105,11 @@ public class Character {
 	 * TODO: Turn collision handling into separate method? 
 	 */
 	private void updateMovement() {
+		boolean turningLeft = status.getTurningLeft();
+		boolean turningRight = status.getTurningRight();
+		boolean movingForward = status.getMovingForward();
+		boolean movingBackwards = status.getMovingBackwards();
+		
 		if (movingForward == movingBackwards) {			
 			moveSpeed = (moveSpeed > 0) ? Math.max(moveSpeed - MOVE_ACCELERATION, 0) : Math.min(moveSpeed + MOVE_ACCELERATION, 0);
 		} else if (movingForward) {
@@ -246,35 +246,7 @@ public class Character {
 			status.setWin(true);
 		}
 	}
-	
-	/**
-	 * Sets updates the moving direction of the player character.
-	 * Does not affect the position of the character
-	 * 
-	 * @param direction: 	A enum describing which direction the player is moving
-	 * 						Depends on which key was pressed.
-	 * @param isMoving: 	Whether to start or stop moving in that direction.
-	 * 						If key was pressed, true. If released, false.
-	 */
-	public void setMovement(Actions direction, boolean isMoving) {
-		switch (direction) {
-		case FORWARD: 
-			movingForward = isMoving;
-			break;
-		case BACK:
-			movingBackwards = isMoving;
-			break;
-		case RIGHT:
-			turningRight = isMoving;
-			break;
-		case LEFT:
-			turningLeft = isMoving;
-			break;
-		default:
-			break;
-		}
-	}
-	
+		
 	private void updateHealth() {
 		// Current eating 
 	}

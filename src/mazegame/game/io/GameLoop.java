@@ -17,8 +17,8 @@ public class GameLoop extends Thread {
 	static final double MAX_FPS = 1.0/120.0;
 	static final long SEC_TO_NANOSEC = 1000000000;
 	
-	public GameLoop(MazeGame game, GamePanel panel, GameStatus status) {
-		this.game = game;
+	public GameLoop(GamePanel panel, GameStatus status) {
+		this.game = status.getGameReference();
 		this.panel = panel;
 		
 		this.status = status;

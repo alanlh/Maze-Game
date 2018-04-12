@@ -30,8 +30,7 @@ public class MazeGame {
 	/**
 	 * Sets up by calling constructors on each part of the game. 
 	 */
-	public MazeGame(GamePanel gamePanel, GameStatus gameStatus) {		
-		this.panel = gamePanel;
+	public MazeGame(GameStatus gameStatus) {		
 		this.gameStatus = gameStatus;
 	}
 	
@@ -44,19 +43,8 @@ public class MazeGame {
 		player = new Character(this, gameStatus, map.getStartingRoom());
 		gameStatus.playerReady(true);
 		gameStatus.setCharacterRoom(map.getStartingRoom());
-		
-		runGameLoop();
 	}
-	
-	/**
-	 * Starts a new game loop
-	 */
-	public void runGameLoop() {
-		GameLoop loop = new GameLoop(this, panel, gameStatus);
 		
-		loop.start();
-	}
-	
 	/**
 	 * Updates map and player. 
 	 */

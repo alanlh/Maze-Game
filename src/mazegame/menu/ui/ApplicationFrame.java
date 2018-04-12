@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
 
+import mazegame.game.io.GameLoop;
 import mazegame.game.io.GameStatus;
 import mazegame.game.logic.MazeGame;
 import mazegame.game.ui.GamePanel;
@@ -49,10 +50,11 @@ public class ApplicationFrame extends JFrame {
 	 */
 	void displayGame() {
 		topBarMenu = new TopBarMenuPanel();
-		gamePanel = new GamePanel();
 		GameStatus gameStatus = new GameStatus();
-		gamePanel.setGameStatus(gameStatus, new MazeGame(gamePanel, gameStatus));
-						
+		gamePanel = new GamePanel(gameStatus);
+		
+		GameLoop loop = new GameLoop(gamePanel, gameStatus);
+		
 		mainMenu.setVisible(false);
 		add(gamePanel, BorderLayout.CENTER);
 		add(topBarMenu, BorderLayout.NORTH);

@@ -20,6 +20,7 @@ import javax.swing.SwingUtilities;
 
 import mazegame.game.io.GameStatus;
 import mazegame.game.io.Actions;
+import mazegame.game.io.GameLoop;
 import mazegame.game.logic.MazeGame;
 import mazegame.game.logic.Character;
 
@@ -37,7 +38,7 @@ public class GamePanel extends JPanel {
 	CharacterPanel characterPanel;
 	ItemsPanel itemsPanel;
 			
-	public GamePanel() {
+	public GamePanel(GameStatus gameStatus) {
 		this.requestFocus();
 		
 		// This if else condition potentially allows users to not restart every time they exist. 
@@ -55,6 +56,12 @@ public class GamePanel extends JPanel {
 		} else {
 			setUpGame();
 		}
+		
+		this.gameStatus = gameStatus;
+		this.game = gameStatus.getGameReference();
+		mapPanel.setGameStatus(gameStatus);
+		characterPanel.setGameStatus(gameStatus);
+		itemsPanel.setGameStatus(gameStatus);
 	}
 		
 	public void setGameStatus(GameStatus gameStatus, MazeGame game) {
@@ -100,6 +107,9 @@ public class GamePanel extends JPanel {
 		itemsPanel.initialize();
 		
 		game.initialize();
+		
+		GameLoop loop = new GameLoop(this, gameStatus);
+		loop.start();
 		
 		addKeyBindings();
 
@@ -158,9 +168,9 @@ public class GamePanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (game.getCharacter() != null) {
+			if (gameStatus != null) {
 				// Safety check
-				game.getCharacter().setMovement(type, pressed);
+				gameStatus.setMovement(type, pressed);
 			}
 		}
 	}

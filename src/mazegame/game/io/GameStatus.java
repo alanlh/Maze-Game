@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.util.LinkedList;
 
 import mazegame.game.logic.Character;
+import mazegame.game.logic.MazeGame;
 
 public class GameStatus {
 	// Class containing variables required to draw the game. Should mostly be volatile
@@ -16,7 +17,16 @@ public class GameStatus {
 
 	// --- VARIABLES RELATED TO THE OVERALL GAME --- //
 		
-	private volatile boolean running = false;
+	public GameStatus() {
+		game = new MazeGame(this);
+	}
+	
+	private MazeGame game;
+	public MazeGame getGameReference() {
+		return game;
+	}
+		
+	private boolean running = false;
 	public void changeRunning(boolean isRunning) {
 		running = isRunning;
 	}	
@@ -122,6 +132,52 @@ public class GameStatus {
 		return playerFaceAngle;
 	}
 	
+	// TODO: Determine if should be volatile?
+	private boolean movingForward = false;
+	private boolean movingBackwards = false;
+	private boolean turningRight = false;
+	private boolean turningLeft = false;
+	/**
+	 * Sets updates the moving direction of the player character.
+	 * Does not affect the position of the character
+	 * Character class gets values from here 
+	 * 
+	 * @param direction: 	A enum describing which direction the player is moving
+	 * 						Depends on which key was pressed.
+	 * @param isMoving: 	Whether to start or stop moving in that direction.
+	 * 						If key was pressed, true. If released, false.
+	 */
+	public void setMovement(Actions direction, boolean isMoving) {
+		switch (direction) {
+		case FORWARD: 
+			movingForward = isMoving;
+			break;
+		case BACK:
+			movingBackwards = isMoving;
+			break;
+		case RIGHT:
+			turningRight = isMoving;
+			break;
+		case LEFT:
+			turningLeft = isMoving;
+			break;
+		default:
+			break;
+		}
+	}
+
+	public boolean getMovingForward() {
+		return movingForward;
+	}
+	public boolean getMovingBackwards() {
+		return movingBackwards;
+	}
+	public boolean getTurningRight() {
+		return turningRight;
+	}
+	public boolean getTurningLeft() {
+		return turningLeft;
+	}
 	
 	// Lesser used attributes
 	// TODO: Figure out how to setup a listener. 

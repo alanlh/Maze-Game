@@ -23,7 +23,7 @@ import mazegame.game.logic.Maze;
 import mazegame.game.logic.MazeGame;
 
 public class ItemsPanel extends JPanel {
-	
+		
 	private GameStatus gameStatus;
 
 	private JScrollPane inventoryPanel = new JScrollPane(this);
