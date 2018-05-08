@@ -31,7 +31,6 @@ public class ItemsPanel extends JPanel {
 	private LinkedList<JLabel> inventoryIcon = new LinkedList<JLabel>();
 
 	GridBagConstraints constraints = new GridBagConstraints();
-
 		
 	public ItemsPanel() {
 		this.setAutoscrolls(true);

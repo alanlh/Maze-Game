@@ -20,8 +20,9 @@ public abstract class Items {
 		INVENTORY
 	}
 	
-	public Point position;	
+	private Point position;	
 	private double orientation;
+	protected double radius;
 	private Room room;
 	private State state;
 	
@@ -34,6 +35,33 @@ public abstract class Items {
 		this.position = position;
 		this.state = State.ROOM;
 		this.orientation = 360 * Math.random();
+		this.radius = 5;
+	}
+	
+	public void setPosition(Point newPosition) {
+		position = newPosition;
+	}
+	
+	public Point getPosition() {
+		return position;
+	}
+	
+	/**
+	 * Sets the orientation in degrees.
+	 * 0 is pointing right, increasing clockwise
+	 * 
+	 * @param newOrientation value between 0 and 360
+	 */
+	public void setOrientation(double newOrientation) {
+		orientation = newOrientation;
+	}
+	
+	public double getOrientation() {
+		return orientation;
+	}
+	
+	public double getRadius() {
+		return radius;
 	}
 	
 	public String getName() {
@@ -42,11 +70,16 @@ public abstract class Items {
 	
 	public abstract Type getType();
 	
+	public void setState(State newState) {
+		state = newState;
+	}
+	
 	public State getState() {
 		return state;
 	}
 	
 	public abstract void onUse();
 	
-	public abstract void draw(Graphics g);
+	public abstract void draw(Graphics g, double itemTopLeftX, double itemTopLeftY);
+
 }

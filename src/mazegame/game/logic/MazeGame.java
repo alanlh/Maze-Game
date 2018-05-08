@@ -53,11 +53,6 @@ public class MazeGame {
 		map.update();
 	}
 		
-	private void findItem() {
-		// First get game coordinates from screen coordinates
-		// Then search through room to see if there are any items there
-		// If match, then give it to character, remove from room.
-	}
 	
 	public Character getCharacter() {
 		return player;

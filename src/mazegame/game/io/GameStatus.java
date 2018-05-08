@@ -4,6 +4,7 @@ import mazegame.game.logic.Room;
 import mazegame.game.logic.items.Items;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import mazegame.game.logic.Character;
@@ -60,43 +61,16 @@ public class GameStatus {
 		return roomInitialized;
 	}
 	
-	private volatile boolean eastWallBlocked = false;
-	private volatile boolean westWallBlocked = false;
-	private volatile boolean northWallBlocked = false;
-	private volatile boolean southWallBlocked = false;
-	
-	private volatile double roomWidth = 0;
-	private volatile double roomHeight = 0;
+	private volatile Room currentRoom = null;
+		
 	public void setCharacterRoom(Room newRoom) {
 		setRoomInitialized(true);
-		eastWallBlocked = newRoom.getEastWallBlocked();
-		westWallBlocked = newRoom.getWestWallBlocked();
-		northWallBlocked = newRoom.getNorthWallBlocked();
-		southWallBlocked = newRoom.getSouthWallBlocked();
-		
-		roomWidth = newRoom.getRoomWidth();
-		roomHeight = newRoom.getRoomHeight();
+		currentRoom = newRoom;
 	}
 	
-	public boolean getEastWallBlocked() {
-		return eastWallBlocked;
+	public Room getCharacterRoom() {
+		return currentRoom;
 	}
-	public boolean getWestWallBlocked() {
-		return westWallBlocked;
-	}
-	public boolean getNorthWallBlocked() {
-		return northWallBlocked;
-	}
-	public boolean getSouthWallBlocked() {
-		return southWallBlocked;
-	}
-	public double getRoomWidth() {
-		return roomWidth;
-	}
-	public double getRoomHeight() {
-		return roomHeight;
-	}
-
 	
 	// --- VARIABLES RELATED TO THE PLAYER CHARACTER --- //
 	

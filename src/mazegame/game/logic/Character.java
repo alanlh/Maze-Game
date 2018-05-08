@@ -32,7 +32,7 @@ public class Character {
 	private final double MOVE_ACCELERATION_TIME;
 	private final double TURN_ACCELERATION_TIME;
 
-	private LinkedList<Items> itemInventory = new LinkedList<>();
+	private ArrayList<Items> itemInventory = new ArrayList<>();
 	private final int MAX_INVENTORY_SIZE = 10;
 	
 	private double hunger = 0;
@@ -311,6 +311,16 @@ public class Character {
 		return false;
 	}
 	
+	public void pickUpItem(Point loc) {
+		Items item = currentRoom.findItem(loc);
+		
+		if (item == null) {
+			return;
+		}
+		
+		itemInventory.add(item);
+	}
+		
 	// Placeholder getter methods. Not sure if needed or not. 
 	
 	private int getFoodCount() {

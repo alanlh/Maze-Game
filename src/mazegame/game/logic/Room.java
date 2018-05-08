@@ -1,7 +1,9 @@
 package mazegame.game.logic;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
+import mazegame.game.logic.items.Food;
 import mazegame.game.logic.items.Items;
 
 public class Room {
@@ -60,7 +62,7 @@ public class Room {
 		
 		visited = false;
 		
-		itemsInRoom = generateInitialItems();
+		generateInitialItems();
 	}
 	
 	public void initialize() {
@@ -70,10 +72,43 @@ public class Room {
 		westRoom = mapContainer.getRoom(roomColumn - 1,  roomRow);
 	}
 	
-	// TODO:
-	private ArrayList<Items> generateInitialItems() {
-		
+	/**
+	 * Locates an item in the map based on where click was located.
+	 * 
+	 * Finds the first item which the click is on. Removes from itemsInRoom.
+	 * 
+	 * @param loc The click location
+	 * @return An item if there is one, null otherwise
+	 */
+	public Items findItem(Point loc) {
+		Iterator<Items> itr = itemsInRoom.iterator();
+		while (itr.hasNext()) {
+			Items item = ((Items) itr.next());
+			Point itemLoc = item.getPosition();
+			double radius = item.getRadius();
+			
+			if (loc.distanceFrom(itemLoc) < radius) {
+				itr.remove();
+				item.setState(Items.State.INVENTORY);
+				return item;
+			}
+		}
 		return null;
+	}
+	
+	// TODO:
+	private void generateInitialItems() {
+		itemsInRoom = new ArrayList<Items>();
+		
+		itemsInRoom.add(new Food(Food.FoodName.BREAD, this, new Point(20, 20)));
+		itemsInRoom.add(new Food(Food.FoodName.BREAD, this, new Point(20, 30)));
+		itemsInRoom.add(new Food(Food.FoodName.BREAD, this, new Point(30, 30)));
+		itemsInRoom.add(new Food(Food.FoodName.BREAD, this, new Point(30, 20)));
+
+	}
+	
+	public ArrayList<Items> getItems() {
+		return itemsInRoom;
 	}
 	
 	public int getX() {

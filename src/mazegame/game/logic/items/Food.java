@@ -13,7 +13,7 @@ public class Food extends Items {
 		TOMATO,
 	}
 	// Use Enum class initialization to set up hunger value, etc. 
-	Food(FoodName foodtype, Room room, Point position) {
+	public Food(FoodName foodtype, Room room, Point position) {
 		super(room, position);
 	}
 	
@@ -33,7 +33,8 @@ public class Food extends Items {
 	}
 
 	@Override
-	public void draw(Graphics g) {
-		
+	public void draw(Graphics g, double itemTopLeftX, double itemTopLeftY) {
+		g.drawRect((int) Math.floor(itemTopLeftX), (int) Math.floor(itemTopLeftY), (int) (2 * radius), (int) (2 * radius));		
 	}
+
 }

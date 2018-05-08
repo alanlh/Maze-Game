@@ -13,6 +13,7 @@ import mazegame.game.io.Actions;
 import mazegame.game.logic.Character;
 import mazegame.game.logic.Point;
 import mazegame.game.logic.Room;
+import mazegame.game.logic.items.Items;
 
 public class MapPanel extends JPanel {
 	
@@ -55,12 +56,12 @@ public class MapPanel extends JPanel {
 				int y = e.getY();
 				
 				Point coord = convertToMapCoordinates(x, y);
-				
+
+				System.out.println("Click: " + coord.getX() + " " + coord.getY());
 				Character player = gameStatus.getGameReference().getCharacter();
 
 				if (SwingUtilities.isLeftMouseButton(e)) {
-					// Evaluate in-game coordinates, and search through character's room
-					// TODO: player.pickUp(Point)
+					player.pickUpItem(coord);
 				} else if (SwingUtilities.isRightMouseButton(e)) {
 					// Same as before
 					// TODO: player._____
@@ -113,32 +114,40 @@ public class MapPanel extends JPanel {
 		//   |____  ____|
 		//
 		
-		if (gameStatus.getEastWallBlocked()) {
+		if (gameStatus.getCharacterRoom().getEastWallBlocked()) {
 			graphics.drawLine(rightBoundary, topBoundary, rightBoundary, bottomBoundary);
 		} else {
 			graphics.drawLine(rightBoundary, topBoundary, rightBoundary, topEntrancePoint);
 			graphics.drawLine(rightBoundary, bottomBoundary, rightBoundary, bottomEntrancePoint);
 		}
 		
-		if (gameStatus.getWestWallBlocked()) {
+		if (gameStatus.getCharacterRoom().getWestWallBlocked()) {
 			graphics.drawLine(leftBoundary, topBoundary, leftBoundary, bottomBoundary);
 		} else {
 			graphics.drawLine(leftBoundary, topBoundary, leftBoundary, topEntrancePoint);
 			graphics.drawLine(leftBoundary, bottomBoundary, leftBoundary, bottomEntrancePoint);
 		}
 
-		if (gameStatus.getNorthWallBlocked()) {
+		if (gameStatus.getCharacterRoom().getNorthWallBlocked()) {
 			graphics.drawLine(leftBoundary, topBoundary, rightBoundary, topBoundary);
 		} else {
 			graphics.drawLine(leftBoundary, topBoundary, leftEntrancePoint, topBoundary);
 			graphics.drawLine(rightBoundary, topBoundary, rightEntrancePoint, topBoundary);
 		}
 
-		if (gameStatus.getSouthWallBlocked()) {
+		if (gameStatus.getCharacterRoom().getSouthWallBlocked()) {
 			graphics.drawLine(leftBoundary, bottomBoundary, rightBoundary, bottomBoundary);
 		} else {
 			graphics.drawLine(leftBoundary, bottomBoundary, leftEntrancePoint, bottomBoundary);
 			graphics.drawLine(rightBoundary, bottomBoundary, rightEntrancePoint, bottomBoundary);
+		}
+		
+		for (Items item : gameStatus.getCharacterRoom().getItems()) {
+			Point itemLoc = item.getPosition();
+			double itemTopLeftX = convertToPanelWidth(itemLoc.getX() - item.getRadius(), wallMinDimension);
+			double itemTopLeftY = convertToPanelHeight(itemLoc.getY() - item.getRadius(), wallMinDimension);
+			
+			item.draw(graphics, itemTopLeftX, itemTopLeftY);
 		}
 	}
 	
@@ -165,7 +174,8 @@ public class MapPanel extends JPanel {
 		double playerCenterPointY = convertToPanelHeight(gameStatus.getPlayerY(interpolation), minDimension);
 						
 		double playerRadius = gameStatus.getPlayerSize() * minDimension;
-		playerRadius /= (getWidth() < getHeight()) ? gameStatus.getRoomWidth() : gameStatus.getRoomHeight();
+		playerRadius /= (getWidth() < getHeight()) ? gameStatus.getCharacterRoom().getRoomWidth() 
+						: gameStatus.getCharacterRoom().getRoomHeight();
 		
 		// Draws character
 		graphics.setColor(gameStatus.getPlayerColor());
@@ -195,7 +205,7 @@ public class MapPanel extends JPanel {
 	 * @return
 	 */
 	private double convertToPanelWidth(double mapCoordinate, double minDimension) {		
-		return leftBoundary + mapCoordinate * minDimension / gameStatus.getRoomWidth();
+		return leftBoundary + mapCoordinate * minDimension / gameStatus.getCharacterRoom().getRoomWidth();
 	}
 	
 	/**
@@ -206,13 +216,13 @@ public class MapPanel extends JPanel {
 	 * @return
 	 */
 	private double convertToPanelHeight(double mapCoordinate, double minDimension) {		
-		return topBoundary + mapCoordinate * minDimension / gameStatus.getRoomHeight();
+		return topBoundary + mapCoordinate * minDimension / gameStatus.getCharacterRoom().getRoomHeight();
 	}
 	
 	private Point convertToMapCoordinates(int x, int y) {
 		int minDimension = computeMinDimension();
-		double xRoom = (x - leftBoundary) * gameStatus.getRoomWidth() / minDimension;
-		double yRoom = (y - topBoundary) * gameStatus.getRoomHeight() / minDimension;
+		double xRoom = (x - leftBoundary) * gameStatus.getCharacterRoom().getRoomWidth() / minDimension;
+		double yRoom = (y - topBoundary) * gameStatus.getCharacterRoom().getRoomHeight() / minDimension;
 		return new Point(xRoom, yRoom);
 	}
 	
